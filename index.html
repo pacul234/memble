@@ -1,607 +1,607 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>TELEKBOYO - AI Image Generator</title>
-  <style>
-    @font-face {
-      font-family: 'Scriptina';
-      src: url('https://db.onlinewebfonts.com/t/16efa2896f117dae2debce906c1f1b23.woff2') format('woff2'),
-        url('https://db.onlinewebfonts.com/t/16efa2896f117dae2debce906c1f1b23.woff') format('woff');
-      font-weight: normal;
-      font-style: normal;
-      font-display: swap
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TELEKBOYO - AI Image Generator</title>
+    <style>
+        /* Base Styles */
+        :root {
+            --primary: #3b82f6;
+            --primary-light: #7aa6fa;
+            --text: #333;
+            --light: #f8fafc;
+            --border: #e2e8f0;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --radius: 12px;
+        }
 
-    * {
-      box-sizing: border-box;
-    }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
 
-    body {
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
-      background-color: #fafafa;
-      color: #333;
-      line-height: 1.6;
-      margin: 0;
-      padding: 20px;
-      text-align: left;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-    }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background-color: #f1f5f9;
+            color: var(--text);
+            line-height: 1.6;
+            padding: 16px;
+            min-height: 100vh;
+        }
 
-    .main-container {
-      max-width: 1200px;
-      margin: 0 auto;
-      width: 100%;
-      flex: 1;
-    }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+        }
 
-    .title-container {
-      position: relative;
-      text-align: center;
-      margin-bottom: 20px;
-      padding: 16px 0;
-      overflow: hidden;
-      background: linear-gradient(135deg, #7aa6fa 0%, #3b82f6 100%);
-      border-radius: 15px;
-      box-shadow: 0 8px 20px rgba(59, 130, 246, 0.3);
-    }
+        /* Header */
+        .header {
+            position: relative;
+            text-align: center;
+            margin-bottom: 24px;
+            padding: 24px 0;
+            overflow: hidden;
+            background: linear-gradient(135deg, var(--primary-light) 0%, var(--primary) 100%);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+        }
 
-    .title-background {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: radial-gradient(circle at 10% 20%, rgba(255, 255, 255, 0.15) 0%, transparent 20%), 
-                  radial-gradient(circle at 90% 80%, rgba(255, 255, 255, 0.15) 0%, transparent 20%);
-      z-index: 0;
-    }
+        .header::before {
+            content: "🐊";
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 100px;
+            opacity: 0.1;
+            z-index: 0;
+            animation: float 6s ease-in-out infinite;
+        }
 
-    .title-container::before {
-      content: "🐊";
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      font-size: 110px;
-      opacity: 0.12;
-      z-index: 0;
-      animation: float 5s ease-in-out infinite;
-    }
+        h1 {
+            position: relative;
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin: 0 0 8px 0;
+            color: white;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+            letter-spacing: 2px;
+            z-index: 1;
+        }
 
-    @keyframes float {
-      0% { transform: translate(-50%, -50%) scale(1); }
-      50% { transform: translate(-50%, -50%) scale(1.1) rotate(5deg); }
-      100% { transform: translate(-50%, -50%) scale(1); }
-    }
+        h2 {
+            position: relative;
+            font-size: 1.1rem;
+            font-weight: 500;
+            margin: 0;
+            color: rgba(255, 255, 255, 0.9);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            z-index: 1;
+        }
 
-    .content-container {
-      display: flex;
-      gap: 20px;
-      flex-direction: column;
-    }
+        .label {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            font-size: 0.8rem;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 50px;
+            padding: 4px 12px;
+            background-color: rgba(255, 255, 255, 0.25);
+            backdrop-filter: blur(5px);
+            color: white;
+            font-weight: 500;
+            z-index: 2;
+        }
 
-    @media (min-width: 992px) {
-      .content-container {
-        flex-direction: row;
-      }
-    }
+        /* Main Layout */
+        .main {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
 
-    .toolbar-container {
-      flex: 1;
-      min-width: 0;
-    }
+        @media (min-width: 1024px) {
+            .main {
+                flex-direction: row;
+            }
+        }
 
-    .result-container {
-      flex: 2;
-      min-width: 0;
-    }
+        /* Controls Panel */
+        .controls {
+            width: 100%;
+            background: white;
+            padding: 20px;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+        }
 
-    .khilaf-label {
-      position: absolute;
-      top: 5px;
-      right: 18px;
-      font-size: 0.8rem;
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      border-radius: 50px;
-      padding: 2px 12px;
-      background-color: rgba(255, 255, 255, 0.25);
-      backdrop-filter: blur(5px);
-      color: white;
-      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-      font-weight: 500;
-      letter-spacing: 0.5px;
-      z-index: 2;
-      animation: pulse 2s infinite alternate;
-    }
+        @media (min-width: 1024px) {
+            .controls {
+                width: 400px;
+                flex-shrink: 0;
+            }
+        }
 
-    @keyframes pulse {
-      0% { background-color: rgba(255, 255, 255, 0.15); }
-      100% { background-color: rgba(255, 255, 255, 0.3); }
-    }
+        /* Prompt Input */
+        .prompt-container {
+            position: relative;
+            margin-bottom: 20px;
+        }
 
-    h1 {
-      position: relative;
-      font-size: 2.5rem;
-      font-weight: 800;
-      margin: 0 0 5px 0;
-      text-align: center;
-      color: white;
-      text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3), 0 0 15px rgba(255, 255, 255, 0.5);
-      letter-spacing: 3px;
-      z-index: 1;
-      animation: textglow 3s infinite alternate;
-    }
+        textarea {
+            width: 100%;
+            min-height: 120px;
+            padding: 16px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            font-size: 1rem;
+            resize: vertical;
+            font-family: inherit;
+            transition: all 0.2s;
+        }
 
-    @media (min-width: 768px) {
-      h1 {
-        font-size: 3.2rem;
-      }
-    }
+        textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+        }
 
-    @keyframes textglow {
-      0% { text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3), 0 0 15px rgba(255, 255, 255, 0.3); }
-      100% { text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3), 0 0 30px rgba(255, 255, 255, 0.6); }
-    }
+        .clear-btn {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            width: 24px;
+            height: 24px;
+            background-color: rgba(200, 200, 200, 0.7);
+            color: var(--text);
+            border: none;
+            border-radius: 50%;
+            font-size: 16px;
+            line-height: 1;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: all 0.2s;
+        }
 
-    h2 {
-      position: relative;
-      font-size: 0.9rem;
-      font-weight: 500;
-      margin: 5px 0 0 0;
-      text-align: center;
-      color: rgba(255, 255, 255, 0.9);
-      letter-spacing: 3px;
-      text-transform: uppercase;
-      z-index: 1;
-    }
+        .clear-btn:hover {
+            background-color: rgba(180, 180, 180, 0.9);
+        }
 
-    @media (min-width: 768px) {
-      h2 {
-        font-size: 1.1rem;
-      }
-    }
+        /* Settings */
+        .settings {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
 
-    .input-area {
-      margin-bottom: 24px;
-    }
+        /* Dropdown Menu */
+        .dropdown {
+            position: relative;
+            display: inline-block;
+            width: 100%;
+        }
 
-    .textarea-container {
-      position: relative;
-      width: 100%;
-      margin-bottom: 12px;
-    }
+        .dropdown-btn {
+            width: 100%;
+            padding: 12px 16px;
+            background-color: white;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            font-size: 1rem;
+            text-align: left;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
 
-    textarea {
-      width: 100%;
-      height: 80px;
-      padding: 15px;
-      border: 1px solid #ddd;
-      border-radius: 8px;
-      font-size: 1rem;
-      resize: vertical;
-      font-family: inherit;
-      box-sizing: border-box;
-      transition: border-color .2s;
-    }
+        .dropdown-btn:after {
+            content: "▼";
+            font-size: 0.8rem;
+            margin-left: 8px;
+        }
 
-    textarea:focus {
-      outline: 0;
-      border-color: #3b82f6;
-    }
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: white;
+            width: 100%;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            z-index: 1;
+            margin-top: 4px;
+            padding: 10px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
 
-    .clear-btn {
-      position: absolute;
-      top: 10px;
-      right: 10px;
-      width: 22px;
-      height: 22px;
-      background-color: rgba(200, 200, 200, .7);
-      color: #333;
-      border: none;
-      border-radius: 50%;
-      font-size: 16px;
-      line-height: 1;
-      cursor: pointer;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      padding: 0;
-      transition: background-color .2s;
-    }
+        .dropdown-content.show {
+            display: block;
+        }
 
-    .clear-btn:hover {
-      background-color: rgba(180, 180, 180, .9);
-    }
+        .dropdown-section {
+            margin-bottom: 12px;
+        }
 
-    button {
-      background-color: #3b82f6;
-      color: #fff;
-      border: none;
-      padding: 10px 20px;
-      border-radius: 6px;
-      font-size: 1rem;
-      cursor: pointer;
-      transition: background-color .2s;
-      width: 100%;
-    }
+        .dropdown-section h4 {
+            margin: 8px 0;
+            color: var(--primary);
+            font-size: 0.9rem;
+        }
 
-    button:hover {
-      background-color: #2563eb;
-    }
+        .dropdown-option {
+            padding: 8px 12px;
+            cursor: pointer;
+            border-radius: 4px;
+            margin: 2px 0;
+            font-size: 0.9rem;
+        }
 
-    #generateBtn {
-      background-color: #7aa6fa;
-    }
+        .dropdown-option:hover {
+            background-color: #f1f5f9;
+        }
 
-    #generateBtn:hover {
-      background-color: #5a8af8;
-    }
+        .dropdown-option.selected {
+            background-color: var(--primary-light);
+            color: white;
+        }
 
-    .result-area {
-      background-color: #fff;
-      border-radius: 8px;
-      border: 1px solid #ddd;
-      min-height: 300px;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      margin-bottom: 24px;
-      padding: 10px;
-      height: 100%;
-    }
+        /* Input Groups */
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
 
-    @media (min-width: 768px) {
-      .result-area {
-        min-height: 400px;
-      }
-    }
+        select, input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            font-size: 1rem;
+            background: white;
+        }
 
-    .result-image {
-      max-width: 100%;
-      max-height: 70vh;
-      padding: 10px;
-      object-fit: contain;
-    }
+        select:focus, input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+        }
 
-    .loading {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      color: #666;
-    }
+        .row {
+            display: flex;
+            gap: 12px;
+        }
 
-    .loading-text {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
+        .row .input-group {
+            flex: 1;
+        }
 
-    .cruttt {
-      display: inline-block;
-      margin-left: 5px;
-      font-weight: bold;
-      color: #3b82f6;
-      animation: textRotate 1.5s ease-in-out infinite;
-    }
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 8px;
+        }
 
-    @keyframes textRotate {
-      0% { transform: rotate(0deg); }
-      25% { transform: rotate(20deg); }
-      50% { transform: rotate(0deg); }
-      75% { transform: rotate(-20deg); }
-      100% { transform: rotate(0deg); }
-    }
+        .hint {
+            font-size: 0.8rem;
+            color: #64748b;
+            line-height: 1.4;
+        }
 
-    .spinner {
-      width: 40px;
-      height: 40px;
-      border: 3px solid #f3f3f3;
-      border-top: 3px solid #3b82f6;
-      border-radius: 50%;
-      animation: spin 1s linear infinite;
-      margin-bottom: 10px;
-    }
+        /* Buttons */
+        .btn {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 14px 20px;
+            border-radius: var(--radius);
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+        }
 
-    @keyframes spin {
-      0% {
-        transform: rotate(0deg);
-      }
-      100% {
-        transform: rotate(360deg);
-      }
-    }
+        .btn:hover {
+            background-color: #2563eb;
+        }
 
-    .download-btn {
-      background-color: #7aa6fa;
-      color: #fff;
-      border: none;
-      padding: 10px 20px;
-      border-radius: 6px;
-      font-size: 1rem;
-      cursor: pointer;
-      transition: background-color .2s;
-      margin-top: 10px;
-      width: auto;
-    }
+        .btn:disabled {
+            background-color: #94a3b8;
+            cursor: not-allowed;
+        }
 
-    .download-btn:hover {
-      background-color: #5a8af8;
-    }
+        .btn-generate {
+            background-color: var(--primary-light);
+        }
 
-    .footer {
-      text-align: center;
-      margin-top: 20px;
-      color: #666;
-      font-size: .8rem;
-      padding: 10px;
-      border: 1px solid #3b82f6;
-      border-radius: 8px;
-    }
+        .btn-generate:hover {
+            background-color: #5a8af8;
+        }
 
-    .modal {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background-color: rgba(0, 0, 0, .5);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      z-index: 1000;
-    }
+        /* Results */
+        .results {
+            flex: 1;
+            background: white;
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+            min-height: 400px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            box-shadow: var(--shadow);
+            position: relative;
+        }
 
-    .modal-content {
-      background-color: #fff;
-      padding: 20px;
-      border-radius: 8px;
-      max-width: 400px;
-      width: 90%;
-      box-shadow: 0 0 10px rgba(0, 0, 0, .3);
-      text-align: center;
-    }
+        .result-image {
+            max-width: 100%;
+            max-height: 70vh;
+            width: auto;
+            height: auto;
+            border-radius: 8px;
+            display: none;
+        }
 
-    .modal-buttons {
-      display: flex;
-      justify-content: center;
-      gap: 10px;
-      margin-top: 20px;
-    }
+        .placeholder {
+            text-align: center;
+            color: #94a3b8;
+            padding: 20px;
+        }
 
-    #confirmYesBtn {
-      background-color: #4CAF50;
-      width: auto;
-    }
+        /* Loading State */
+        .loading {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            gap: 16px;
+            text-align: center;
+        }
 
-    #confirmNoBtn {
-      background-color: #f44336;
-      width: auto;
-    }
+        .spinner {
+            width: 48px;
+            height: 48px;
+            border: 5px solid rgba(59, 130, 246, 0.1);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
 
-    /* Responsive controls */
-    select, input[type="number"], input[type="checkbox"] {
-      width: 100%;
-      max-width: 100%;
-    }
+        .loading-text {
+            font-size: 1.1rem;
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
 
-    @media (max-width: 768px) {
-      .modal-buttons {
-        flex-direction: column;
-      }
-      
-      .content-container {
-        gap: 15px;
-      }
-      
-      .result-area {
-        min-height: 300px;
-      }
-    }
+        .loading-text span {
+            color: var(--primary);
+            font-weight: bold;
+            animation: pulse 1.5s infinite;
+        }
 
-    @media (max-width: 480px) {
-      body {
-        padding: 10px;
-      }
-      
-      h1 {
-        font-size: 2rem;
-      }
-      
-      h2 {
-        font-size: 0.8rem;
-      }
-      
-      .khilaf-label {
-        font-size: 0.7rem;
-        padding: 2px 8px;
-      }
-    }
-  </style>
+        /* Download Button */
+        .btn-download {
+            background-color: var(--primary-light);
+            margin-top: 20px;
+            width: auto;
+            min-width: 180px;
+            display: none;
+        }
+
+        .btn-download:hover {
+            background-color: #5a8af8;
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            margin-top: 24px;
+            color: #64748b;
+            font-size: 0.9rem;
+            padding: 16px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            background: white;
+            box-shadow: var(--shadow);
+        }
+
+        /* Animations */
+        @keyframes float {
+            0%, 100% { transform: translate(-50%, -50%) scale(1) rotate(0deg); }
+            50% { transform: translate(-50%, -50%) scale(1.05) rotate(5deg); }
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        /* Responsive Adjustments */
+        @media (max-width: 640px) {
+            h1 {
+                font-size: 2rem;
+            }
+            
+            h2 {
+                font-size: 0.9rem;
+            }
+            
+            .row {
+                flex-direction: column;
+                gap: 12px;
+            }
+        }
+    </style>
 </head>
 <body>
-  <div class="main-container">
-    <div class="title-container">
-      <div class="title-background"></div>
-      <h1>TELEKBOYO</h1>
-      <span class="khilaf-label">autobruts</span>
-      <h2>ai image generator</h2>
-    </div>
-    
+    <div class="container">
+        <div class="header">
+            <h1>TELEKBOYO</h1>
+            <span class="label">autobruts</span>
+            <h2>ai image generator</h2>
+        </div>
         
-    <div class="content-container">
-      <!-- Left column: toolbar -->
-      <div class="toolbar-container">
-        <div class="input-area">
-          <div class="textarea-container">
-            <textarea id="promptInput" placeholder="ketik prompt ..."></textarea>
-            <button id="clearTextBtn" onclick="clearTextArea()" class="clear-btn">×</button>
-          </div>
-          <div style="display:flex;flex-direction:column;gap:10px">
-            <div style="display:flex;gap:10px;align-items:center">
-              <select id="apiSelect" style="padding:8px;border-radius:6px;border:1px solid #ddd;font-size:.9rem" onchange="togglePollinationsControls()">
-                <option value="default">Autobruts</option>
-                <option value="pollinations">Pollinations</option>
-              </select>
-              <select id="ratioSelect" style="padding:8px;border-radius:6px;border:1px solid #ddd;font-size:.9rem;display:none">
-                <option value="1:1">1:1 (Square)</option>
-                <option value="16:9">16:9 (Landscape)</option>
-                <option value="9:16">9:16 (Portrait)</option>
-                <option value="4:3">4:3 (Standard)</option>
-                <option value="3:4">3:4 (Portrait)</option>
-                <option value="3:2">3:2 (Classic)</option>
-                <option value="2:3">2:3 (Portrait)</option>
-              </select>
-            </div>
-            <div id="pollinationsContainer" style="display:none;flex-direction:column;gap:10px">
-              <div id="seedContainer">
-                <input id="seedInput" type="number" placeholder="Seed (opsional)" style="padding:8px;border-radius:6px;border:1px solid #ddd;font-size:.9rem;width:100%">
-                <div style="font-size:.8rem;color:#666;margin-top:4px">*Angka seed akan menghasilkan gambar yang sama dengan prompt yang sama</div>
-              </div>
-              <div>
-                <textarea id="negativePromptInput" placeholder="Negative prompt (opsional)" style="padding:8px;border-radius:6px;border:1px solid #ddd;font-size:.9rem;width:100%;height:60px">deformed, blurry, bad anatomy, extra limbs, poorly drawn face</textarea>
-                <div style="font-size:.8rem;color:#666;margin-top:4px">*Hal-hal yang ingin Anda hindari dalam gambar</div>
-              </div>
-              <div style="display:flex;gap:10px">
-                <div style="flex:1">
-                  <input id="guidanceInput" type="number" placeholder="Guidance scale" min="1" max="20" value="7" style="padding:8px;border-radius:6px;border:1px solid #ddd;font-size:.9rem;width:100%">
-                  <div style="font-size:.8rem;color:#666;margin-top:4px">*Kepatuhan terhadap prompt (1-20)</div>
+        <div class="main">
+            <!-- Controls Panel -->
+            <div class="controls">
+                <div class="prompt-container">
+                    <textarea id="promptInput" placeholder="Describe the image you want to generate..."></textarea>
+                    <button id="clearBtn" class="clear-btn">×</button>
                 </div>
-                <div style="flex:1">
-                  <input id="stepsInput" type="number" placeholder="Steps" min="10" max="150" value="30" style="padding:8px;border-radius:6px;border:1px solid #ddd;font-size:.9rem;width:100%">
-                  <div style="font-size:.8rem;color:#666;margin-top:4px">*Jumlah langkah (10-150)</div>
+                
+                <div class="settings">
+                    <!-- Settings Dropdown -->
+                    <div class="dropdown">
+                        <button class="dropdown-btn">Advanced Settings</button>
+                        <div class="dropdown-content" id="settingsDropdown">
+                            <div class="dropdown-section">
+                                <h4>Image Format</h4>
+                                <div class="dropdown-option" data-setting="format" data-value="png">PNG (High Quality)</div>
+                                <div class="dropdown-option" data-setting="format" data-value="jpg">JPG (Compressed)</div>
+                                <div class="dropdown-option" data-setting="format" data-value="webp">WebP (Modern)</div>
+                            </div>
+                            
+                            <div class="dropdown-section">
+                                <h4>Art Style</h4>
+                                <div class="dropdown-option" data-setting="style" data-value="realistic">Realistic</div>
+                                <div class="dropdown-option" data-setting="style" data-value="digital-art">Digital Art</div>
+                                <div class="dropdown-option" data-setting="style" data-value="fantasy">Fantasy</div>
+                                <div class="dropdown-option" data-setting="style" data-value="anime">Anime</div>
+                                <div class="dropdown-option" data-setting="style" data-value="watercolor">Watercolor</div>
+                                <div class="dropdown-option" data-setting="style" data-value="oil-painting">Oil Painting</div>
+                                <div class="dropdown-option" data-setting="style" data-value="pixel-art">Pixel Art</div>
+                                <div class="dropdown-option" data-setting="style" data-value="cyberpunk">Cyberpunk</div>
+                                <div class="dropdown-option" data-setting="style" data-value="steampunk">Steampunk</div>
+                                <div class="dropdown-option" data-setting="style" data-value="minimalist">Minimalist</div>
+                            </div>
+                            
+                            <div class="dropdown-section">
+                                <h4>Lighting</h4>
+                                <div class="dropdown-option" data-setting="lighting" data-value="natural">Natural Light</div>
+                                <div class="dropdown-option" data-setting="lighting" data-value="studio">Studio Light</div>
+                                <div class="dropdown-option" data-setting="lighting" data-value="dramatic">Dramatic</div>
+                                <div class="dropdown-option" data-setting="lighting" data-value="neon">Neon Lights</div>
+                                <div class="dropdown-option" data-setting="lighting" data-value="sunset">Sunset</div>
+                            </div>
+                            
+                            <div class="dropdown-section">
+                                <h4>Resolution</h4>
+                                <div class="dropdown-option" data-setting="resolution" data-value="512">Standard (512px)</div>
+                                <div class="dropdown-option" data-setting="resolution" data-value="768">HD (768px)</div>
+                                <div class="dropdown-option" data-setting="resolution" data-value="1024">Full HD (1024px)</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="ratioSelect">Aspect Ratio</label>
+                        <select id="ratioSelect">
+                            <option value="1:1">Square (1:1)</option>
+                            <option value="16:9">Widescreen (16:9)</option>
+                            <option value="9:16">Portrait (9:16)</option>
+                            <option value="4:3">Standard (4:3)</option>
+                            <option value="3:2">Classic (3:2)</option>
+                        </select>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="input-group">
+                            <label for="seedInput">Seed (optional)</label>
+                            <input id="seedInput" type="number" placeholder="Leave blank for random">
+                            <div class="hint">Same seed + same prompt = same image</div>
+                        </div>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="negativePrompt">Negative Prompt</label>
+                        <textarea id="negativePrompt" rows="3">low quality, blurry, bad anatomy, extra limbs, poorly drawn face</textarea>
+                        <div class="hint">What you want to exclude from the image</div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="input-group">
+                            <label for="guidanceScale">Guidance Scale</label>
+                            <input id="guidanceScale" type="number" min="1" max="20" value="7">
+                            <div class="hint">How closely to follow the prompt (7-12 is good)</div>
+                        </div>
+                        <div class="input-group">
+                            <label for="steps">Steps</label>
+                            <input id="steps" type="number" min="10" max="150" value="30">
+                            <div class="hint">More steps = better quality (30-50 is good)</div>
+                        </div>
+                    </div>
+                    
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="enhancedMode" checked>
+                        <label for="enhancedMode">Enhanced Mode</label>
+                        <div class="hint">Adds quality modifiers automatically</div>
+                    </div>
+                    
+                    <button id="generateBtn" class="btn btn-generate">
+                        Generate Image
+                    </button>
                 </div>
-              </div>
-              <div style="display:flex;align-items:center;margin-top:4px">
-                <input id="enhancedModeCheckbox" type="checkbox" checked style="margin-right:8px">
-                <label for="enhancedModeCheckbox" style="font-size:.9rem">Enhanced Mode</label>
-                <div style="font-size:.8rem;color:#666;margin-left:8px">*8K UHD, HDR10, hyper-detailed, intricate textures</div>
-              </div>
             </div>
-            <button id="generateBtn" onclick="generateImg()">Generate</button>
-          </div>
+            
+            <!-- Results Panel -->
+            <div class="results">
+                <div id="placeholder" class="placeholder">
+                    <p>Your generated image will appear here</p>
+                    <p>Enter a prompt and click "Generate Image"</p>
+                </div>
+                
+                <div id="loading" class="loading">
+                    <div class="spinner"></div>
+                    <p class="loading-text">Generating your image... <span>cruttt</span></p>
+                </div>
+                
+                <img id="resultImage" class="result-image">
+                
+                <button id="downloadBtn" class="btn btn-download">
+                    Download Image
+                </button>
+            </div>
         </div>
-      </div>
-      
-      <!-- Right column: generated image results -->
-      <div class="result-container">
-        <div class="result-area">
-          <div id="loadingEl" hidden class="loading">
-            <div class="spinner"></div>
-            <p class="loading-text">Membuat gambar... <span class="cruttt">cruttt</span></p>
-          </div>
-          <img id="resultImg" hidden class="result-image">
-          <button id="downloadBtn" hidden onclick="downloadImage()" class="download-btn">Download</button>
+        
+        <div class="footer">
+            powered by KenthirAi ©2025 | Using Pollinations API
         </div>
-      </div>
     </div>
-  </div>
-  <div class="footer">powered by KenthirAi ©2025</div>
 
-  <script>
-    document.fonts.ready.then(() => {
-      const e = document.createElement("div");
-      e.style.fontFamily = "Scriptina, cursive", e.style.opacity = "0", e.textContent = "telekboyo", document.body.appendChild(e), setTimeout(() => {
-        document.body.removeChild(e)
-      }, 100)
-    });
-    let khilafConfirmed = "true" === localStorage.getItem("khilafConfirmed");
-
-    function confirmAge(e) {
-      e ? (khilafConfirmed = !0, localStorage.setItem("khilafConfirmed", "true")) : (apiSelect.value = "pollinations", togglePollinationsControls()), ageConfirmModal.hidden = !0
-    }
-
-    function togglePollinationsControls() {
-      let e = "pollinations" === apiSelect.value;
-      ratioSelect.style.display = e ? "block" : "none", pollinationsContainer.style.display = e ? "flex" : "none", "default" === apiSelect.value && !khilafConfirmed && (ageConfirmModal.hidden = !1)
-    }
-    window.onload = function() {
-      togglePollinationsControls()
-    };
-
-    function clearTextArea() {
-      promptInput.value = "", promptInput.focus()
-    }
-    async function addWatermark(e) {
-      return new Promise((t, n) => {
-        const o = new Image;
-        o.onload = () => {
-          const n = document.createElement("canvas");
-          n.width = o.width, n.height = o.height;
-          const i = n.getContext("2d");
-          i.drawImage(o, 0, 0);
-          const a = Math.max(28, .06 * o.width);
-          i.font = `${a}px 'Scriptina', cursive`, i.fillStyle = "rgba(255, 255, 255, 0.7)", i.strokeStyle = "rgba(0, 0, 0, 0.7)", i.lineWidth = 2;
-          const s = "telekboyo",
-            d = i.measureText(s).width,
-            l = o.width - d - 30,
-            r = o.height - 30;
-          i.strokeText(s, l, r), i.fillText(s, l, r), t(n.toDataURL("image/png"))
-        }, o.onerror = () => n(new Error("Failed to load image for watermarking")), o.src = e
-      })
-    }
-    async function generateImg() {
-      let e = promptInput.value.trim();
-      if (!e) return void alert("Silakan masukkan deskripsi gambar");
-      let t = apiSelect.value;
-      if ("default" === t && !khilafConfirmed) return void(ageConfirmModal.hidden = !1);
-      let n = e + ", sange, sensual, erotic ,sdxl, detailed, 4k,photography ";
-      generateBtn.disabled = !0, generateBtn.textContent = "Membuat...", loadingEl.hidden = !1, resultImg.hidden = !0, downloadBtn.hidden = !0;
-      try {
-        let o;
-        o = "pollinations" === t ? await generateImageFromPollinations(e) : await generateImage(n), o = await addWatermark(o), resultImg.src = o, resultImg.hidden = !1, downloadBtn.hidden = !1
-      } catch (i) {
-        alert("Gagal membuat gambar. Silakan coba lagi."), console.error(i)
-      } finally {
-        loadingEl.hidden = !0, generateBtn.disabled = !1, generateBtn.textContent = "Generate"
-      }
-    }
-    async function generateImageFromPollinations(e) {
-      enhancedModeCheckbox.checked && (e += ", 8K UHD, HDR10, hyper-detailed, intricate textures");
-      let t = encodeURIComponent(e),
-        n = "";
-      if ("pollinations" === apiSelect.value && ratioSelect.value) {
-        let [e, o] = ratioSelect.value.split(":").map(Number),
-          i, a, s = 512;
-        e > o ? (i = s, a = Math.round(s * (o / e))) : (a = s, i = Math.round(s * (e / o))), n = `&width=${i}&height=${a}`
-      }
-      let o = "";
-      seedInput.value && (o = `&seed=${seedInput.value}`);
-      let i = "";
-      negativePromptInput.value && (i = `&negative=${encodeURIComponent(negativePromptInput.value)}`);
-      let a = "";
-      guidanceInput.value && (a = `&guidance=${guidanceInput.value}`);
-      let s = "";
-      stepsInput.value && (s = `&steps=${stepsInput.value}`);
-      let d = `https://image.pollinations.ai/prompt/${t}?nologo=true${n}${o}${i}${a}${s}`;
-      return await fetchImageAsDataURL(d)
-    }
-    async function fetchImageAsDataURL(e) {
-      const t = await fetch(e),
-        n = await t.blob();
-      return new Promise((e, t) => {
-        const o = new FileReader;
-        o.onloadend = () => e(o.result), o.onerror = t, o.readAsDataURL(n)
-      })
-    }
-
-    function downloadImage() {
-      let e = document.createElement("a");
-      e.href = resultImg.src;
-      let t = new Date,
-        n = `kenthirai-${t.getFullYear()}${(t.getMonth()+1).toString().padStart(2,"0")}${t.getDate().toString().padStart(2,"0")}_${t.getHours().toString().padStart(2,"0")}${t.getMinutes().toString().padStart(2,"0")}.png`;
-      e.download = n, document.body.appendChild(e), e.click(), document.body.removeChild(e)
-    }
-    
-    // Placeholder function for the default image generation
-    async function generateImage(prompt) {
-      // This is a placeholder - you would replace this with your actual image generation API call
-      return `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}?nologo=true`;
-    }
-  </script>
-</body>
-</html>
+    <script>
+        // DOM Elements
+        const elements = {
+            promptInput: document.getElementById('promptInput'),
+            clearBtn: document.getElementById('clearBtn'),
+            ratioSelect: document.getElementById('ratioSelect'),
+            seedInput: document.getElementById('seedInput'),
+            negativePrompt: document.getElementById('negativePrompt'),
+            guidanceScale: document.getElementById('guidanceScale'),
+            steps: document.getElementById('steps'),
+            enhancedMode: document.getElementById('enhancedMode'),
+            generateBtn: document.getElementById('generateBtn'),
+            placeholder: document.getElementById('placeholder'),
+            loading: document.getElementById('loading'),
+            resultImage: document.getEleme
